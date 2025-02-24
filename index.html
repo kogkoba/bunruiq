@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>植物の分類わけクイズゲーム</title>
   <style>
-    /* 背景や文字などの基本設定 */
     body {
       background-color: black;
       color: white;
@@ -15,9 +14,8 @@
       padding: 0;
       text-align: center;
     }
-    /* 横幅を固定せず、最大幅にする */
     #gameContainer {
-      max-width: 480px;  /* お好みで調整 */
+      max-width: 480px; /* PC・スマホ両対応のお好み幅 */
       margin: 0 auto;
       padding: 10px;
     }
@@ -79,11 +77,10 @@
       background-color: white;
       color: black;
     }
-    #startButton, #mouthButton, #bgmToggle {
+    #startButton, #mouthButton {
       font-size: 20px;
       margin: 20px;
     }
-    /* 選択肢エリア（固定位置、枠付き） */
     #classificationButtons {
       width: 300px;
       height: 120px; /* 必要に応じて調整 */
@@ -93,6 +90,64 @@
       flex-wrap: wrap;
       justify-content: space-around;
       align-items: center;
+    }
+
+    /* ===== トグルスイッチのCSS ===== */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+      margin: 10px;
+    }
+    /* 非表示のチェックボックス */
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    /* スライダー部分 */
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #999;
+      border: 1px solid #555;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    /* チェック時のスライダー色・位置 */
+    input:checked + .slider {
+      background-color: #33cc33; /* ON時の背景色 */
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    /* ON/OFFの文字を表示する例（任意） */
+    .slider:after {
+      content: "OFF";
+      color: white;
+      display: block;
+      position: absolute;
+      transform: translate(-50%,-50%);
+      top: 50%; left: 70%;
+      font-size: 10px;
+      font-family: sans-serif;
+    }
+    input:checked + .slider:after {
+      content: "ON";
+      left: 30%;
     }
   </style>
 </head>
@@ -105,7 +160,7 @@
     
     <!-- ゲーム画面 -->
     <div id="gameScreen" style="display: none;">
-      <!-- 上部：植物HPバー -->
+      <!-- 植物HPバー -->
       <div id="plantHP" class="hp-bar">
         <div class="hp-text" id="plantHPText">植物HP: 100</div>
       </div>
@@ -113,19 +168,20 @@
       <!-- メッセージボックス -->
       <div id="messageBox"></div>
       
-      <!-- 植物画像（固定サイズ、枠付き） -->
+      <!-- 植物画像 -->
       <div id="plantImageContainer">
         <img id="plantImage" src="" alt="植物画像">
       </div>
       
-      <!-- BGM ON/OFF 切替ボタン -->
-      <div id="bgmToggleContainer">
-        <button id="bgmToggle" class="button">BGM: ON</button>
-      </div>
+      <!-- BGM ON/OFFスイッチ -->
+      <label class="switch">
+        <!-- 初期状態はONにしたい場合は checked をつける -->
+        <input type="checkbox" id="bgmCheckbox" checked>
+        <span class="slider"></span>
+      </label>
       
-      <!-- 選択肢エリア（固定位置、枠付き） -->
+      <!-- 分類選択ボタン -->
       <div id="classificationButtons">
-        <!-- ボタンの data-class を「アブラナ」「イネ」「ウリ」「キク」「マメ」「その他」に揃える -->
         <button class="button classification" data-class="キク">キク</button>
         <button class="button classification" data-class="アブラナ">アブラナ</button>
         <button class="button classification" data-class="イネ">イネ</button>
@@ -134,12 +190,12 @@
         <button class="button classification" data-class="その他">その他</button>
       </div>
       
-      <!-- 下部：プレイヤーHPバー -->
+      <!-- プレイヤーHPバー -->
       <div id="playerHP" class="hp-bar">
         <div class="hp-text" id="playerHPText">プレイヤーHP: 100</div>
       </div>
       
-      <!-- ゲーム終了後：くちぶえボタン -->
+      <!-- ゲーム終了時：くちぶえボタン -->
       <div id="endScreen" style="display: none;">
         <button id="mouthButton" class="button">▶くちぶえ</button>
       </div>
@@ -151,13 +207,12 @@
   
   <script>
     // 画像ファイルは "images/" フォルダを参照する想定
-    // index.html と images/ が同じ階層にある
     // 例： bunrui/index.html と bunrui/images/aburanna.png
     const plants = [
-      // 例として2種のみ記載（実際は69種分を追加）
+      // 例として2種だけ（実際は69種分を入れてください）
       { file: "aburanna.png", classification: "アブラナ", name: "アブラナ" },
-      { file: "kiku.png",     classification: "キク",     name: "キク" }
-      // ... ここに他のファイルを追加 ...
+      { file: "kiku.png", classification: "キク", name: "キク" }
+      // ... 他のファイルを追加 ...
     ];
     
     let currentPlant = null;
@@ -174,17 +229,15 @@
     const mouthButton = document.getElementById('mouthButton');
     const endScreen = document.getElementById('endScreen');
     const bgm = document.getElementById('bgm');
-    const bgmToggle = document.getElementById('bgmToggle');
     
-    // BGM ON/OFF切替フラグ
-    let bgmEnabled = true;
+    // トグルスイッチ
+    const bgmCheckbox = document.getElementById('bgmCheckbox');
     
     startButton.addEventListener('click', startGame);
     
     classificationButtons.forEach(button => {
       button.addEventListener('click', () => {
         const originalText = button.innerText;
-        // クリック演出：一瞬「▶」を表示
         button.innerText = "▶" + originalText;
         setTimeout(() => { button.innerText = originalText; }, 200);
         handleAnswer(button.getAttribute('data-class'));
@@ -194,28 +247,29 @@
     mouthButton.addEventListener('click', () => { location.reload(); });
     
     // BGM ON/OFF切替処理
-    bgmToggle.addEventListener('click', () => {
-      bgmEnabled = !bgmEnabled;
-      if (bgmEnabled) {
+    bgmCheckbox.addEventListener('change', () => {
+      if (bgmCheckbox.checked) {
+        // ON
         bgm.play().catch(error => console.error("BGM再生エラー:", error));
-        bgmToggle.innerText = "BGM: ON";
       } else {
+        // OFF
         bgm.pause();
-        bgmToggle.innerText = "BGM: OFF";
       }
     });
     
     function startGame() {
       document.getElementById('startScreen').style.display = 'none';
       gameScreen.style.display = 'block';
-      bgm.play().catch(error => { console.error("BGM再生エラー:", error); });
+      // 初期状態がONなら即再生
+      if (bgmCheckbox.checked) {
+        bgm.play().catch(error => { console.error("BGM再生エラー:", error); });
+      }
       nextQuestion();
     }
     
     function nextQuestion() {
       messageBox.innerText = "";
       currentPlant = plants[Math.floor(Math.random() * plants.length)];
-      // images/ フォルダから読み込む
       plantImage.src = "images/" + currentPlant.file;
       messageBox.innerText = "植物が　あらわれた。";
       setTimeout(() => {
