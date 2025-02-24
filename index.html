@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <!-- デバイス幅に応じて可変、PCでも切れない -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>植物の分類わけクイズゲーム</title>
   <style>
@@ -14,7 +15,7 @@
       text-align: center;
     }
     #gameContainer {
-      max-width: 480px; /* PC・スマホ両対応のお好み幅 */
+      max-width: 480px;
       margin: 0 auto;
       padding: 10px;
     }
@@ -82,7 +83,7 @@
     }
     #classificationButtons {
       width: 300px;
-      height: 120px; /* 必要に応じて調整 */
+      height: 120px;
       border: 1px solid white;
       margin: 10px auto;
       display: flex;
@@ -90,7 +91,6 @@
       justify-content: space-around;
       align-items: center;
     }
-
     /* トグルスイッチ（BGM用） */
     .switch {
       position: relative;
@@ -107,7 +107,10 @@
     .slider {
       position: absolute;
       cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background-color: #999;
       border: 1px solid #555;
       transition: .4s;
@@ -136,7 +139,8 @@
       display: block;
       position: absolute;
       transform: translate(-50%,-50%);
-      top: 50%; left: 70%;
+      top: 50%;
+      left: 70%;
       font-size: 10px;
       font-family: sans-serif;
     }
@@ -196,18 +200,19 @@
     </div>
   </div>
   
-  <!-- 背景BGM：外部URLでもOK -->
+  <!-- 背景BGM（外部URL） -->
   <audio id="bgm" src="https://kogkoba.github.io/bunrui/sciencebgm.mp3" loop></audio>
   
   <script>
-    // ◆◆ 画像ファイルは mine/images/ に配置 ◆◆
-    // index.html と images/ が同じ階層
-    // → "images/" + ファイル名 でアクセス
+    /* 
+       注意: このソースでは、リポジトリのルートに
+       aburanna.png, kiku.png, ... などの画像ファイルがある前提です。
+       index.html は mine フォルダ内にあるため、画像へは "../" を付けます。
+    */
     const plants = [
-      // 例：2種のみ（実際は69種分を追加）
+      // 例として2種のみ（実際は69種分追加してください）
       { file: "aburanna.png", classification: "アブラナ", name: "アブラナ" },
       { file: "kiku.png",     classification: "キク",     name: "キク" }
-      // ... ここに他のファイルを追加 ...
     ];
     
     let currentPlant = null;
@@ -225,13 +230,11 @@
     const endScreen = document.getElementById('endScreen');
     const bgm = document.getElementById('bgm');
     
-    // BGMスイッチ
+    // BGM用トグルスイッチ
     const bgmCheckbox = document.getElementById('bgmCheckbox');
     
-    // ゲーム開始
     startButton.addEventListener('click', startGame);
     
-    // 分類ボタン押下時
     classificationButtons.forEach(button => {
       button.addEventListener('click', () => {
         const originalText = button.innerText;
@@ -241,7 +244,6 @@
       });
     });
     
-    // くちぶえボタン（再読み込み）
     mouthButton.addEventListener('click', () => { location.reload(); });
     
     // BGM ON/OFF切替処理
@@ -256,19 +258,17 @@
     function startGame() {
       document.getElementById('startScreen').style.display = 'none';
       gameScreen.style.display = 'block';
-      // 初期状態がONなら再生
       if (bgmCheckbox.checked) {
-        bgm.play().catch(error => { console.error("BGM再生エラー:", error); });
+        bgm.play().catch(error => console.error("BGM再生エラー:", error));
       }
       nextQuestion();
     }
     
     function nextQuestion() {
       messageBox.innerText = "";
-      // ランダムに1つの植物を選ぶ
       currentPlant = plants[Math.floor(Math.random() * plants.length)];
-      // images/フォルダから画像読み込み
-      plantImage.src = "images/" + currentPlant.file;
+      // index.html は mine/ 内、画像はリポジトリのルートにあるため "../" を使用
+      plantImage.src = "../" + currentPlant.file;
       messageBox.innerText = "植物が　あらわれた。";
       setTimeout(() => {
         messageBox.innerText = "植物は " + currentPlant.name + " を　くりだした。";
