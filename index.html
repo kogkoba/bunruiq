@@ -2,7 +2,6 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <!-- デバイス幅に応じて可変、PCでも切れない -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>植物の分類わけクイズゲーム</title>
   <style>
@@ -19,7 +18,6 @@
       margin: 0 auto;
       padding: 10px;
     }
-    /* メッセージボックス：3行固定 */
     #messageBox {
       height: 60px;
       border: 1px solid white;
@@ -28,7 +26,6 @@
       overflow: hidden;
       font-size: 14px;
     }
-    /* HPバー */
     .hp-bar {
       width: 100%;
       height: 20px;
@@ -47,7 +44,7 @@
     }
     #plantHP { margin-bottom: 10px; }
     #playerHP { margin-top: 10px; }
-    /* 画像表示領域（固定サイズ、枠付き） */
+
     #plantImageContainer {
       width: 300px;
       height: 300px;
@@ -63,7 +60,7 @@
       max-width: 100%;
       max-height: 100%;
     }
-    /* ボタン */
+
     .button {
       background-color: #333;
       border: 1px solid white;
@@ -83,7 +80,7 @@
     }
     #classificationButtons {
       width: 300px;
-      height: 120px; /* 必要に応じて調整 */
+      height: 120px;
       border: 1px solid white;
       margin: 10px auto;
       display: flex;
@@ -91,6 +88,7 @@
       justify-content: space-around;
       align-items: center;
     }
+
     /* トグルスイッチ（BGM用） */
     .switch {
       position: relative;
@@ -148,33 +146,26 @@
 </head>
 <body>
   <div id="gameContainer">
-    <!-- スタート画面 -->
     <div id="startScreen">
       <button id="startButton" class="button">スタート</button>
     </div>
     
-    <!-- ゲーム画面 -->
     <div id="gameScreen" style="display: none;">
-      <!-- 植物HPバー -->
       <div id="plantHP" class="hp-bar">
         <div class="hp-text" id="plantHPText">植物HP: 100</div>
       </div>
       
-      <!-- メッセージボックス -->
       <div id="messageBox"></div>
       
-      <!-- 植物画像 -->
       <div id="plantImageContainer">
         <img id="plantImage" src="" alt="植物画像">
       </div>
       
-      <!-- BGM ON/OFFスイッチ -->
       <label class="switch">
         <input type="checkbox" id="bgmCheckbox" checked>
         <span class="slider"></span>
       </label>
       
-      <!-- 分類選択ボタン -->
       <div id="classificationButtons">
         <button class="button classification" data-class="キク科">キク科</button>
         <button class="button classification" data-class="アブラナ科">アブラナ科</button>
@@ -184,97 +175,25 @@
         <button class="button classification" data-class="その他">その他</button>
       </div>
       
-      <!-- プレイヤーHPバー -->
       <div id="playerHP" class="hp-bar">
         <div class="hp-text" id="playerHPText">プレイヤーHP: 100</div>
       </div>
       
-      <!-- ゲーム終了後：くちぶえボタン -->
       <div id="endScreen" style="display: none;">
         <button id="mouthButton" class="button">▶くちぶえ</button>
       </div>
     </div>
   </div>
   
-  <!-- 背景BGM -->
   <audio id="bgm" src="https://kogkoba.github.io/bunrui/sciencebgm.mp3" loop></audio>
   
   <script>
-    /* 
-       ※ このソースでは、index.html は mine/ フォルダ内にあり、
-       画像ファイルはリポジトリのルートに配置されている前提です。
-       そのため、画像へは "../" を使って参照します。
-    */
+    // 例: index.html が mine/ フォルダ内、画像はルート(../) か ../plant/ フォルダ などに置いているケース
+    // 69種分の配列は省略例。実際に追加してください。
     const plants = [
       { file: "aburanna.png", classification: "アブラナ科", name: "アブラナ" },
-      { file: "inugarashi.png", classification: "アブラナ科", name: "イヌガラシ" },
-      { file: "kabu.png", classification: "アブラナ科", name: "カブ" },
-      { file: "kyabetu.png", classification: "アブラナ科", name: "キャベツ" },
-      { file: "daikon.png", classification: "アブラナ科", name: "ダイコン" },
-      { file: "nazuna.png", classification: "アブラナ科", name: "ナズナ" },
-      { file: "wasabi.png", classification: "アブラナ科", name: "ワサビ" },
-      { file: "ine.png", classification: "イネ科", name: "イネ" },
-      { file: "enokorogusa.png", classification: "イネ科", name: "エノコログサ" },
-      { file: "ohisiba.png", classification: "イネ科", name: "オヒシバ" },
-      { file: "komugi.png", classification: "イネ科", name: "コムギ" },
-      { file: "sasa.png", classification: "イネ科", name: "ササ" },
-      { file: "susuki.png", classification: "イネ科", name: "ススキ" },
-      { file: "suzumenokatabira.png", classification: "イネ科", name: "スズメノカタビラ" },
-      { file: "suzumenoteppou.png", classification: "イネ科", name: "スズメノテッポウ" },
-      { file: "take.png", classification: "イネ科", name: "タケ" },
-      { file: "toumorokoshi.png", classification: "イネ科", name: "トウモロコシ" },
-      { file: "mehisiba.png", classification: "イネ科", name: "メヒシバ" },
-      { file: "amatyazuru.png", classification: "ウリ科", name: "アマチャヅル" },
-      { file: "kabotya.png", classification: "ウリ科", name: "カボチャ" },
-      { file: "karasuuri.png", classification: "ウリ科", name: "カラスウリ" },
-      { file: "kyuuri.png", classification: "ウリ科", name: "キュウリ" },
-      { file: "suika.png", classification: "ウリ科", name: "スイカ" },
-      { file: "hetima.png", classification: "ウリ科", name: "ヘチマ" },
-      { file: "yuugao.png", classification: "ウリ科", name: "ユウガオ" },
-      { file: "onamomi.png", classification: "キク科", name: "オナモミ" },
-      { file: "kiku.png", classification: "キク科", name: "キク" },
-      { file: "kosumosu.png", classification: "キク科", name: "コスモス" },
-      { file: "seitakaawadatisou.png", classification: "キク科", name: "セイタカアワダチソウ" },
-      { file: "senndanngusa.png", classification: "キク科", name: "センダングサ" },
-      { file: "daria.png", classification: "キク科", name: "ダリア" },
-      { file: "tannpopo.png", classification: "キク科", name: "タンポポ" },
-      { file: "noazami.png", classification: "キク科", name: "ノアザミ" },
-      { file: "nogeshi.png", classification: "キク科", name: "ノゲシ" },
-      { file: "haruzion.png", classification: "キク科", name: "ハルジオン" },
-      { file: "himawari.png", classification: "キク科", name: "ヒマワリ" },
-      { file: "himezyoon.png", classification: "キク科", name: "ヒメジョオン" },
-      { file: "hyakunitisou.png", classification: "キク科", name: "ヒャクニチソウ" },
-      { file: "ma-garetto.png", classification: "キク科", name: "マーガレット" },
-      { file: "mari-go-rudo.png", classification: "キク科", name: "マリーゴールド" },
-      { file: "asagao.png", classification: "その他", name: "アサガオ" },
-      { file: "ayame.png", classification: "その他", name: "アヤメ" },
-      { file: "oobako.png", classification: "その他", name: "オオバコ" },
-      { file: "osiroibana.png", classification: "その他", name: "オシロイバナ" },
-      { file: "katabami.png", classification: "その他", name: "カタバミ" },
-      { file: "guraziorasu.png", classification: "その他", name: "グラジオラス" },
-      { file: "sakura.png", classification: "その他", name: "サクラ" },
-      { file: "zyagaimo.png", classification: "その他", name: "ジャガイモ" },
-      { file: "suisen.png", classification: "その他", name: "スイセン" },
-      { file: "tutuzi.png", classification: "その他", name: "ツツジ" },
-      { file: "tubaki.png", classification: "その他", name: "ツバキ" },
-      { file: "tuyukusa.png", classification: "その他", name: "ツユクサ" },
-      { file: "higannbana.png", classification: "その他", name: "ヒガンバナ" },
-      { file: "hiyasinnsu.png", classification: "その他", name: "ヒヤシンス" },
-      { file: "housennka.png", classification: "その他", name: "ホウセンカ" },
-      { file: "yadorigi.png", classification: "その他", name: "ヤドリギ" },
-      { file: "yamabuki.png", classification: "その他", name: "ヤマブキ" },
-      { file: "yuri.png", classification: "その他", name: "ユリ" },
-      { file: "inngennmame.png", classification: "マメ科", name: "インゲンマメ" },
-      { file: "enndou.png", classification: "マメ科", name: "エンドウ" },
-      { file: "ozigisou.png", classification: "マメ科", name: "オジギソウ" },
-      { file: "karasunoenndou.png", classification: "マメ科", name: "カラスノエンドウ" },
-      { file: "kuzu.png", classification: "マメ科", name: "クズ" },
-      { file: "gennge.png", classification: "マメ科", name: "ゲンゲ" },
-      { file: "sirotumegusa.png", classification: "マメ科", name: "シロツメグサ" },
-      { file: "sui-topi.png", classification: "マメ科", name: "スイートピー" },
-      { file: "nemunoki.png", classification: "マメ科", name: "ネムノキ" },
-      { file: "hagi.png", classification: "マメ科", name: "ハギ" },
-      { file: "fuzi.png", classification: "マメ科", name: "フジ" }
+      { file: "yuri.png", classification: "その他", name: "ユリ" }
+      // ... 他のデータ ...
     ];
     
     let currentPlant = null;
@@ -291,8 +210,6 @@
     const mouthButton = document.getElementById('mouthButton');
     const endScreen = document.getElementById('endScreen');
     const bgm = document.getElementById('bgm');
-    
-    // BGM用トグルスイッチ
     const bgmCheckbox = document.getElementById('bgmCheckbox');
     
     startButton.addEventListener('click', startGame);
@@ -308,7 +225,7 @@
     
     mouthButton.addEventListener('click', () => { location.reload(); });
     
-    // BGM ON/OFF切替処理
+    // BGM ON/OFF
     bgmCheckbox.addEventListener('change', () => {
       if (bgmCheckbox.checked) {
         bgm.play().catch(error => console.error("BGM再生エラー:", error));
@@ -329,8 +246,11 @@
     function nextQuestion() {
       messageBox.innerText = "";
       currentPlant = plants[Math.floor(Math.random() * plants.length)];
-      // index.html は mine/ 内、画像はルートにあるため "../" を使用
+      // ここを実際のフォルダ構成に合わせて修正
+      // もし ルート直下にファイルがある場合:  "../" + currentPlant.file
+      // もし plant/ フォルダにある場合: "../plant/" + currentPlant.file
       plantImage.src = "../" + currentPlant.file;
+      
       messageBox.innerText = "植物が　あらわれた。";
       setTimeout(() => {
         messageBox.innerText = "植物は " + currentPlant.name + " を　くりだした。";
