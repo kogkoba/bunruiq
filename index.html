@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <!-- デバイス幅に応じて可変、PCでも切れない -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>植物の分類わけクイズゲーム</title>
+  <style>
+    /* 背景や文字などの基本設定 */
+    body {
+      background-color: black;
+      color: white;
+      font-family: 'Press Start 2P', monospace;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    /* 横幅を固定せず、最大幅にする */
+    #gameContainer {
+      max-width: 480px;  /* お好みで調整 */
+      margin: 0 auto;
+      padding: 10px;
+    }
+    /* メッセージボックス：3行固定 */
+    #messageBox {
+      height: 60px;
+      border: 1px solid white;
+      margin: 10px 0;
+      padding: 5px;
+      overflow: hidden;
+      font-size: 14px;
+    }
+    /* HPバー */
+    .hp-bar {
+      width: 100%;
+      height: 20px;
+      background: linear-gradient(to right, red, darkred);
+      margin: 5px 0;
+      border: 1px solid white;
+      position: relative;
+    }
+    .hp-text {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
+      line-height: 20px;
+      font-size: 12px;
+    }
+    #plantHP { margin-bottom: 10px; }
+    #playerHP { margin-top: 10px; }
+    /* 画像表示領域（固定サイズ、枠付き） */
+    #plantImageContainer {
+      width: 300px;
+      height: 300px;
+      margin: 10px auto;
+      border: 1px solid white;
+      background-color: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #plantImage {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    /* ボタン全般 */
+    .button {
+      background-color: #333;
+      border: 1px solid white;
+      color: white;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .button:hover {
+      background-color: white;
+      color: black;
+    }
+    #startButton, #mouthButton, #bgmToggle {
+      font-size: 20px;
+      margin: 20px;
+    }
+    /* 選択肢エリア（固定位置、枠付き） */
+    #classificationButtons {
+      width: 300px;
+      height: 120px; /* 必要に応じて調整 */
+      border: 1px solid white;
+      margin: 10px auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="gameContainer">
+    <!-- スタート画面 -->
+    <div id="startScreen">
+      <button id="startButton" class="button">スタート</button>
+    </div>
+    
+    <!-- ゲーム画面 -->
+    <div id="gameScreen" style="display: none;">
+      <!-- 上部：植物HPバー -->
+      <div id="plantHP" class="hp-bar">
+        <div class="hp-text" id="plantHPText">植物HP: 100</div>
+      </div>
+      
+      <!-- メッセージボックス -->
+      <div id="messageBox"></div>
+      
+      <!-- 植物画像（固定サイズ、枠付き） -->
+      <div id="plantImageContainer">
+        <img id="plantImage" src="" alt="植物画像">
+      </div>
+      
+      <!-- BGM ON/OFF 切替ボタン -->
+      <div id="bgmToggleContainer">
+        <button id="bgmToggle" class="button">BGM: ON</button>
+      </div>
+      
+      <!-- 選択肢エリア（固定位置、枠付き） -->
+      <div id="classificationButtons">
+        <!-- ボタンの data-class を「アブラナ」「イネ」「ウリ」「キク」「マメ」「その他」に揃える -->
+        <button class="button classification" data-class="キク">キク</button>
+        <button class="button classification" data-class="アブラナ">アブラナ</button>
+        <button class="button classification" data-class="イネ">イネ</button>
+        <button class="button classification" data-class="マメ">マメ</button>
+        <button class="button classification" data-class="ウリ">ウリ</button>
+        <button class="button classification" data-class="その他">その他</button>
+      </div>
+      
+      <!-- 下部：プレイヤーHPバー -->
+      <div id="playerHP" class="hp-bar">
+        <div class="hp-text" id="playerHPText">プレイヤーHP: 100</div>
+      </div>
+      
+      <!-- ゲーム終了後：くちぶえボタン -->
+      <div id="endScreen" style="display: none;">
+        <button id="mouthButton" class="button">▶くちぶえ</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 背景BGM -->
+  <audio id="bgm" src="https://kogkoba.github.io/bunrui/sciencebgm.mp3" loop></audio>
+  
+  <script>
+    // 画像ファイルは "images/" フォルダを参照する想定
+    // index.html と images/ が同じ階層にある
+    // 例： bunrui/index.html と bunrui/images/aburanna.png
+    const plants = [
+      // 例として2種のみ記載（実際は69種分を追加）
+      { file: "aburanna.png", classification: "アブラナ", name: "アブラナ" },
+      { file: "kiku.png",     classification: "キク",     name: "キク" }
+      // ... ここに他のファイルを追加 ...
+    ];
+    
+    let currentPlant = null;
+    let plantHP = 100;
+    let playerHP = 100;
+    
+    const startButton = document.getElementById('startButton');
+    const gameScreen = document.getElementById('gameScreen');
+    const messageBox = document.getElementById('messageBox');
+    const plantImage = document.getElementById('plantImage');
+    const plantHPText = document.getElementById('plantHPText');
+    const playerHPText = document.getElementById('playerHPText');
+    const classificationButtons = document.querySelectorAll('.classification');
+    const mouthButton = document.getElementById('mouthButton');
+    const endScreen = document.getElementById('endScreen');
+    const bgm = document.getElementById('bgm');
+    const bgmToggle = document.getElementById('bgmToggle');
+    
+    // BGM ON/OFF切替フラグ
+    let bgmEnabled = true;
+    
+    startButton.addEventListener('click', startGame);
+    
+    classificationButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const originalText = button.innerText;
+        // クリック演出：一瞬「▶」を表示
+        button.innerText = "▶" + originalText;
+        setTimeout(() => { button.innerText = originalText; }, 200);
+        handleAnswer(button.getAttribute('data-class'));
+      });
+    });
+    
+    mouthButton.addEventListener('click', () => { location.reload(); });
+    
+    // BGM ON/OFF切替処理
+    bgmToggle.addEventListener('click', () => {
+      bgmEnabled = !bgmEnabled;
+      if (bgmEnabled) {
+        bgm.play().catch(error => console.error("BGM再生エラー:", error));
+        bgmToggle.innerText = "BGM: ON";
+      } else {
+        bgm.pause();
+        bgmToggle.innerText = "BGM: OFF";
+      }
+    });
+    
+    function startGame() {
+      document.getElementById('startScreen').style.display = 'none';
+      gameScreen.style.display = 'block';
+      bgm.play().catch(error => { console.error("BGM再生エラー:", error); });
+      nextQuestion();
+    }
+    
+    function nextQuestion() {
+      messageBox.innerText = "";
+      currentPlant = plants[Math.floor(Math.random() * plants.length)];
+      // images/ フォルダから読み込む
+      plantImage.src = "images/" + currentPlant.file;
+      messageBox.innerText = "植物が　あらわれた。";
+      setTimeout(() => {
+        messageBox.innerText = "植物は " + currentPlant.name + " を　くりだした。";
+      }, 400);
+    }
+    
+    function handleAnswer(selectedClass) {
+      if (selectedClass === currentPlant.classification) {
+        messageBox.innerText = currentPlant.name + " は　" + currentPlant.classification + " だ";
+        setTimeout(() => {
+          messageBox.innerText = "正解！ 植物に20のダメージ";
+          plantHP -= 20;
+          updateHP();
+          checkGameOver();
+          if (plantHP > 0) {
+            setTimeout(nextQuestion, 1000);
+          }
+        }, 1000);
+      } else {
+        messageBox.innerText = "ミス！";
+        setTimeout(() => {
+          messageBox.innerText = currentPlant.name + " は　" + currentPlant.classification + " だ";
+          setTimeout(() => {
+            messageBox.innerText = "プレイヤーに20のダメージ";
+            playerHP -= 20;
+            updateHP();
+            checkGameOver();
+            if (playerHP > 0) {
+              setTimeout(nextQuestion, 1000);
+            }
+          }, 1000);
+        }, 500);
+      }
+    }
+    
+    function updateHP() {
+      plantHPText.innerText = "植物HP: " + Math.max(plantHP, 0);
+      playerHPText.innerText = "プレイヤーHP: " + Math.max(playerHP, 0);
+    }
+    
+    function checkGameOver() {
+      if (plantHP <= 0 || playerHP <= 0) {
+        if (plantHP <= 0) {
+          messageBox.innerText = "植物は　たおれた。";
+        } else {
+          messageBox.innerText = "プレイヤーは　たおれた。";
+        }
+        plantImage.style.display = "none";
+        classificationButtons.forEach(btn => btn.style.display = "none");
+        document.getElementById('plantHP').style.display = "none";
+        document.getElementById('playerHP').style.display = "none";
+        endScreen.style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>
