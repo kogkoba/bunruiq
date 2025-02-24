@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>植物の分類わけクイズゲーム</title>
   <style>
-  
     body {
       background-color: black;
       color: white;
@@ -91,6 +90,7 @@
       justify-content: space-around;
       align-items: center;
     }
+
     /* トグルスイッチ（BGM用） */
     .switch {
       position: relative;
@@ -163,7 +163,7 @@
       <!-- メッセージボックス -->
       <div id="messageBox"></div>
       
-      <!-- 植物画像（300x300） -->
+      <!-- 植物画像 -->
       <div id="plantImageContainer">
         <img id="plantImage" src="" alt="植物画像">
       </div>
@@ -200,9 +200,9 @@
   <audio id="bgm" src="https://kogkoba.github.io/bunrui/sciencebgm.mp3" loop></audio>
   
   <script>
-    // 画像は plant/ フォルダにある想定
-    // index.html は mine/ フォルダ内
-    // → "../plant/" + ファイル名 でアクセス
+    // ◆◆ 画像ファイルは mine/images/ に配置 ◆◆
+    // index.html と images/ が同じ階層
+    // → "images/" + ファイル名 でアクセス
     const plants = [
       // 例：2種のみ（実際は69種分を追加）
       { file: "aburanna.png", classification: "アブラナ", name: "アブラナ" },
@@ -267,8 +267,8 @@
       messageBox.innerText = "";
       // ランダムに1つの植物を選ぶ
       currentPlant = plants[Math.floor(Math.random() * plants.length)];
-      // ../plant/フォルダから画像読み込み
-      plantImage.src = "../plant/" + currentPlant.file;
+      // images/フォルダから画像読み込み
+      plantImage.src = "images/" + currentPlant.file;
       messageBox.innerText = "植物が　あらわれた。";
       setTimeout(() => {
         messageBox.innerText = "植物は " + currentPlant.name + " を　くりだした。";
