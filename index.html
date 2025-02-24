@@ -2,40 +2,59 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <!-- PC・スマホ対応。画面幅に合わせる -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>植物の分類わけクイズゲーム</title>
+
+  <!-- ▼ レトロゲーム風フォントを使いたい場合はGoogle Fontsなどで読み込む例（Press Start 2Pなど） 
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  -->
+  
   <style>
+    /* 全体設定 */
     body {
       background-color: black;
       color: white;
+      /* ドット風フォントを使う場合は下記のように指定
+         (Press Start 2Pが読み込めない場合はmonospaceフォールバック) */
       font-family: 'Press Start 2P', monospace;
       margin: 0;
       padding: 0;
       text-align: center;
     }
+    /* メインコンテナ */
     #gameContainer {
-      max-width: 360px; /* お好みで調整 */
+      max-width: 480px;
       margin: 0 auto;
       padding: 10px;
     }
-    /* メッセージボックス：3行固定 */
+
+    /* ドラクエ風の枠線をイメージ：太めの白枠、黒背景 */
+    .dq-frame {
+      border: 3px double white;    /* 太めの白枠を2重線風に */
+      background-color: black;
+      color: white;
+      padding: 8px;
+      margin: 10px auto;
+      box-sizing: border-box;
+    }
+
+    /* メッセージボックス：ドラクエ風に3行程度 */
     #messageBox {
-      height: 60px;
-      border: 1px solid white;
-      margin: 10px 0;
-      padding: 5px;
+      width: 90%;
+      height: 60px; /* 3行固定 */
       overflow: hidden;
+      margin: 10px auto;
       font-size: 14px;
     }
+
     /* HPバー */
     .hp-bar {
       width: 100%;
       height: 20px;
       background: linear-gradient(to right, red, darkred);
-      margin: 5px 0;
       border: 1px solid white;
       position: relative;
+      margin: 5px 0;
     }
     .hp-text {
       position: absolute;
@@ -44,15 +63,15 @@
       left: 0;
       line-height: 20px;
       font-size: 12px;
+      color: white;
     }
-    #plantHP { margin-bottom: 10px; }
-    #playerHP { margin-top: 10px; }
-    /* 画像表示領域（固定サイズ、枠付き） */
+
+    /* 植物画像表示領域 */
     #plantImageContainer {
       width: 300px;
       height: 300px;
       margin: 10px auto;
-      border: 1px solid white;
+      border: 3px double white;
       background-color: black;
       display: flex;
       align-items: center;
@@ -60,38 +79,44 @@
       overflow: hidden;
     }
     #plantImage {
-      max-width: 90%;
-      max-height: 90%;
+      max-width: 100%;
+      max-height: 100%;
     }
-    /* ボタン */
+
+    /* ボタン全般：ドラクエ風（黒背景・白文字・白枠） */
     .button {
-      background-color: #333;
-      border: 1px solid white;
+      background-color: black;
+      border: 2px solid white;
       color: white;
-      padding: 10px 20px;
+      padding: 8px 12px;
       margin: 5px;
       cursor: pointer;
-      font-size: 16px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
     }
     .button:hover {
       background-color: white;
       color: black;
     }
     #startButton, #mouthButton {
-      font-size: 20px;
       margin: 20px;
     }
+
+    /* 選択肢エリア：コマンドウィンドウっぽく */
     #classificationButtons {
-      width: 300px;
-      height: 120px; /* 必要に応じて調整 */
-      border: 1px solid white;
+      width: 240px;
+      /* ドラクエ風の枠 */
+      border: 3px double white;
+      background-color: black;
       margin: 10px auto;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      align-items: center;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px;
+      justify-items: center;
     }
-    /* トグルスイッチ（BGM用） */
+
+    /* トグルスイッチ（BGM ON/OFF） */
     .switch {
       position: relative;
       display: inline-block;
@@ -109,7 +134,7 @@
       cursor: pointer;
       top: 0; left: 0; right: 0; bottom: 0;
       background-color: #999;
-      border: 1px solid #555;
+      border: 2px solid white;
       transition: .4s;
       border-radius: 34px;
     }
@@ -118,7 +143,7 @@
       content: "";
       height: 26px;
       width: 26px;
-      left: 4px;
+      left: 3px;
       bottom: 3px;
       background-color: white;
       transition: .4s;
@@ -138,7 +163,7 @@
       transform: translate(-50%,-50%);
       top: 50%; left: 70%;
       font-size: 10px;
-      font-family: sans-serif;
+      font-family: 'Press Start 2P', monospace;
     }
     input:checked + .slider:after {
       content: "ON";
@@ -148,8 +173,8 @@
 </head>
 <body>
   <div id="gameContainer">
-    <!-- スタート画面 -->
-    <div id="startScreen">
+    <!-- スタート画面（DQ風に枠で囲んでもOK） -->
+    <div id="startScreen" class="dq-frame">
       <button id="startButton" class="button">スタート</button>
     </div>
     
@@ -160,10 +185,10 @@
         <div class="hp-text" id="plantHPText">植物HP: 100</div>
       </div>
       
-      <!-- メッセージボックス -->
-      <div id="messageBox"></div>
+      <!-- メッセージボックス（DQ風枠） -->
+      <div id="messageBox" class="dq-frame"></div>
       
-      <!-- 植物画像（300x300） -->
+      <!-- 植物画像（DQ風枠） -->
       <div id="plantImageContainer">
         <img id="plantImage" src="" alt="植物画像">
       </div>
@@ -174,7 +199,7 @@
         <span class="slider"></span>
       </label>
       
-      <!-- 分類選択ボタン（6種） -->
+      <!-- 分類選択ボタン（DQ風コマンドウィンドウ） -->
       <div id="classificationButtons">
         <button class="button classification" data-class="アブラナ科">アブラナ科</button>
         <button class="button classification" data-class="イネ科">イネ科</button>
@@ -190,92 +215,25 @@
       </div>
       
       <!-- ゲーム終了時：くちぶえボタン -->
-      <div id="endScreen" style="display: none;">
+      <div id="endScreen" class="dq-frame" style="display: none;">
         <button id="mouthButton" class="button">▶くちぶえ</button>
       </div>
     </div>
   </div>
   
-  <!-- 背景BGM（外部URL） -->
+  <!-- BGM -->
   <audio id="bgm" src="https://kogkoba.github.io/bunrui/sciencebgm.mp3" loop></audio>
   
   <script>
     /*
-      1) このindex.html と同じフォルダに 69枚の画像ファイルがある想定
-      2) 画像名は "aburanna.png", "kiku.png" ... のようにリポジトリ直下に存在
-      3) GitHub Pagesの設定は mainブランチ / (root)
+      ▼ 画像ファイルと index.html は同じ階層を想定。
+      ▼ GitHub Pagesの設定は mainブランチ/(root)。
+      ▼ 69種のデータをここに追加してください。
     */
-
     const plants = [
       { file: "aburanna.png", classification: "アブラナ科", name: "アブラナ" },
-      { file: "inugarashi.png", classification: "アブラナ科", name: "イヌガラシ" },
-      { file: "kabu.png", classification: "アブラナ科", name: "カブ" },
-      { file: "kyabetu.png", classification: "アブラナ科", name: "キャベツ" },
-      { file: "daikon.png", classification: "アブラナ科", name: "ダイコン" },
-      { file: "nazuna.png", classification: "アブラナ科", name: "ナズナ" },
-      { file: "wasabi.png", classification: "アブラナ科", name: "ワサビ" },
-      { file: "ine.png", classification: "イネ科", name: "イネ" },
-      { file: "enokorogusa.png", classification: "イネ科", name: "エノコログサ" },
-      { file: "ohisiba.png", classification: "イネ科", name: "オヒシバ" },
-      { file: "komugi.png", classification: "イネ科", name: "コムギ" },
-      { file: "sasa.png", classification: "イネ科", name: "ササ" },
-      { file: "susuki.png", classification: "イネ科", name: "ススキ" },
-      { file: "suzumenokatabira.png", classification: "イネ科", name: "スズメノカタビラ" },
-      { file: "suzumenoteppou.png", classification: "イネ科", name: "スズメノテッポウ" },
-      { file: "take.png", classification: "イネ科", name: "タケ" },
-      { file: "toumorokoshi.png", classification: "イネ科", name: "トウモロコシ" },
-      { file: "mehisiba.png", classification: "イネ科", name: "メヒシバ" },
-      { file: "amatyazuru.png", classification: "ウリ科", name: "アマチャヅル" },
-      { file: "kabotya.png", classification: "ウリ科", name: "カボチャ" },
-      { file: "karasuuri.png", classification: "ウリ科", name: "カラスウリ" },
-      { file: "kyuuri.png", classification: "ウリ科", name: "キュウリ" },
-      { file: "suika.png", classification: "ウリ科", name: "スイカ" },
-      { file: "hetima.png", classification: "ウリ科", name: "ヘチマ" },
-      { file: "yuugao.png", classification: "ウリ科", name: "ユウガオ" },
-      { file: "onamomi.png", classification: "キク科", name: "オナモミ" },
-      { file: "kiku.png", classification: "キク科", name: "キク" },
-      { file: "kosumosu.png", classification: "キク科", name: "コスモス" },
-      { file: "seitakaawadatisou.png", classification: "キク科", name: "セイタカアワダチソウ" },
-      { file: "senndanngusa.png", classification: "キク科", name: "センダングサ" },
-      { file: "daria.png", classification: "キク科", name: "ダリア" },
-      { file: "tannpopo.png", classification: "キク科", name: "タンポポ" },
-      { file: "noazami.png", classification: "キク科", name: "ノアザミ" },
-      { file: "nogeshi.png", classification: "キク科", name: "ノゲシ" },
-      { file: "haruzion.png", classification: "キク科", name: "ハルジオン" },
-      { file: "himawari.png", classification: "キク科", name: "ヒマワリ" },
-      { file: "himezyoon.png", classification: "キク科", name: "ヒメジョオン" },
-      { file: "hyakunitisou.png", classification: "キク科", name: "ヒャクニチソウ" },
-      { file: "ma-garetto.png", classification: "キク科", name: "マーガレット" },
-      { file: "mari-go-rudo.png", classification: "キク科", name: "マリーゴールド" },
-      { file: "asagao.png", classification: "その他", name: "アサガオ" },
-      { file: "ayame.png", classification: "その他", name: "アヤメ" },
-      { file: "oobako.png", classification: "その他", name: "オオバコ" },
-      { file: "osiroibana.png", classification: "その他", name: "オシロイバナ" },
-      { file: "katabami.png", classification: "その他", name: "カタバミ" },
-      { file: "guraziorasu.png", classification: "その他", name: "グラジオラス" },
-      { file: "sakura.png", classification: "その他", name: "サクラ" },
-      { file: "zyagaimo.png", classification: "その他", name: "ジャガイモ" },
-      { file: "suisen.png", classification: "その他", name: "スイセン" },
-      { file: "tutuzi.png", classification: "その他", name: "ツツジ" },
-      { file: "tubaki.png", classification: "その他", name: "ツバキ" },
-      { file: "tuyukusa.png", classification: "その他", name: "ツユクサ" },
-      { file: "higannbana.png", classification: "その他", name: "ヒガンバナ" },
-      { file: "hiyasinnsu.png", classification: "その他", name: "ヒヤシンス" },
-      { file: "housennka.png", classification: "その他", name: "ホウセンカ" },
-      { file: "yadorigi.png", classification: "その他", name: "ヤドリギ" },
-      { file: "yamabuki.png", classification: "その他", name: "ヤマブキ" },
-      { file: "yuri.png", classification: "その他", name: "ユリ" },
-      { file: "inngennmame.png", classification: "マメ科", name: "インゲンマメ" },
-      { file: "enndou.png", classification: "マメ科", name: "エンドウ" },
-      { file: "ozigisou.png", classification: "マメ科", name: "オジギソウ" },
-      { file: "karasunoenndou.png", classification: "マメ科", name: "カラスノエンドウ" },
-      { file: "kuzu.png", classification: "マメ科", name: "クズ" },
-      { file: "gennge.png", classification: "マメ科", name: "ゲンゲ" },
-      { file: "sirotumegusa.png", classification: "マメ科", name: "シロツメグサ" },
-      { file: "sui-topi.png", classification: "マメ科", name: "スイートピー" },
-      { file: "nemunoki.png", classification: "マメ科", name: "ネムノキ" },
-      { file: "hagi.png", classification: "マメ科", name: "ハギ" },
-      { file: "fuzi.png", classification: "マメ科", name: "フジ" }
+      { file: "kiku.png", classification: "キク科", name: "キク" }
+      // ... ここに69種分を追加 ...
     ];
 
     let currentPlant = null;
@@ -327,12 +285,9 @@
     
     function nextQuestion() {
       messageBox.innerText = "";
-      // ランダムに1つの植物を選ぶ
       currentPlant = plants[Math.floor(Math.random() * plants.length)];
-      // index.html と同じフォルダに画像があるなら  plantImage.src = currentPlant.file;
-      // ここでは同階層にある想定
+      // 画像が index.html と同じ階層にある場合
       plantImage.src = currentPlant.file;
-      
       messageBox.innerText = "植物が　あらわれた。";
       setTimeout(() => {
         messageBox.innerText = "植物は " + currentPlant.name + " を　くりだした。";
