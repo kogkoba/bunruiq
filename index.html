@@ -2,7 +2,6 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <!-- デバイス幅に応じて可変、PCでも切れない -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>植物の分類わけクイズゲーム</title>
   <style>
@@ -63,7 +62,7 @@
       max-width: 100%;
       max-height: 100%;
     }
-    /* ボタン全般 */
+    /* ボタン */
     .button {
       background-color: #333;
       border: 1px solid white;
@@ -91,8 +90,7 @@
       justify-content: space-around;
       align-items: center;
     }
-
-    /* ===== トグルスイッチのCSS ===== */
+    /* トグルスイッチ（BGM用） */
     .switch {
       position: relative;
       display: inline-block;
@@ -100,13 +98,11 @@
       height: 34px;
       margin: 10px;
     }
-    /* 非表示のチェックボックス */
     .switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
-    /* スライダー部分 */
     .slider {
       position: absolute;
       cursor: pointer;
@@ -127,14 +123,12 @@
       transition: .4s;
       border-radius: 50%;
     }
-    /* チェック時のスライダー色・位置 */
     input:checked + .slider {
-      background-color: #33cc33; /* ON時の背景色 */
+      background-color: #33cc33;
     }
     input:checked + .slider:before {
       transform: translateX(26px);
     }
-    /* ON/OFFの文字を表示する例（任意） */
     .slider:after {
       content: "OFF";
       color: white;
@@ -168,14 +162,13 @@
       <!-- メッセージボックス -->
       <div id="messageBox"></div>
       
-      <!-- 植物画像 -->
+      <!-- 植物画像（300x300） -->
       <div id="plantImageContainer">
         <img id="plantImage" src="" alt="植物画像">
       </div>
       
       <!-- BGM ON/OFFスイッチ -->
       <label class="switch">
-        <!-- 初期状態はONにしたい場合は checked をつける -->
         <input type="checkbox" id="bgmCheckbox" checked>
         <span class="slider"></span>
       </label>
@@ -195,24 +188,25 @@
         <div class="hp-text" id="playerHPText">プレイヤーHP: 100</div>
       </div>
       
-      <!-- ゲーム終了時：くちぶえボタン -->
+      <!-- ゲーム終了後：くちぶえボタン -->
       <div id="endScreen" style="display: none;">
         <button id="mouthButton" class="button">▶くちぶえ</button>
       </div>
     </div>
   </div>
   
-  <!-- 背景BGM -->
+  <!-- 背景BGM：外部URLでもOK -->
   <audio id="bgm" src="https://kogkoba.github.io/bunrui/sciencebgm.mp3" loop></audio>
   
   <script>
-    // 画像ファイルは "images/" フォルダを参照する想定
-    // 例： bunrui/index.html と bunrui/images/aburanna.png
+    // 画像は plant/ フォルダにある想定
+    // index.html は mine/ フォルダ内
+    // → "../plant/" + ファイル名 でアクセス
     const plants = [
-      // 例として2種だけ（実際は69種分を入れてください）
+      // 例：2種のみ（実際は69種分を追加）
       { file: "aburanna.png", classification: "アブラナ", name: "アブラナ" },
-      { file: "kiku.png", classification: "キク", name: "キク" }
-      // ... 他のファイルを追加 ...
+      { file: "kiku.png",     classification: "キク",     name: "キク" }
+      // ... ここに他のファイルを追加 ...
     ];
     
     let currentPlant = null;
@@ -230,11 +224,13 @@
     const endScreen = document.getElementById('endScreen');
     const bgm = document.getElementById('bgm');
     
-    // トグルスイッチ
+    // BGMスイッチ
     const bgmCheckbox = document.getElementById('bgmCheckbox');
     
+    // ゲーム開始
     startButton.addEventListener('click', startGame);
     
+    // 分類ボタン押下時
     classificationButtons.forEach(button => {
       button.addEventListener('click', () => {
         const originalText = button.innerText;
@@ -244,15 +240,14 @@
       });
     });
     
+    // くちぶえボタン（再読み込み）
     mouthButton.addEventListener('click', () => { location.reload(); });
     
     // BGM ON/OFF切替処理
     bgmCheckbox.addEventListener('change', () => {
       if (bgmCheckbox.checked) {
-        // ON
         bgm.play().catch(error => console.error("BGM再生エラー:", error));
       } else {
-        // OFF
         bgm.pause();
       }
     });
@@ -260,7 +255,7 @@
     function startGame() {
       document.getElementById('startScreen').style.display = 'none';
       gameScreen.style.display = 'block';
-      // 初期状態がONなら即再生
+      // 初期状態がONなら再生
       if (bgmCheckbox.checked) {
         bgm.play().catch(error => { console.error("BGM再生エラー:", error); });
       }
@@ -269,8 +264,10 @@
     
     function nextQuestion() {
       messageBox.innerText = "";
+      // ランダムに1つの植物を選ぶ
       currentPlant = plants[Math.floor(Math.random() * plants.length)];
-      plantImage.src = "images/" + currentPlant.file;
+      // ../plant/フォルダから画像読み込み
+      plantImage.src = "../plant/" + currentPlant.file;
       messageBox.innerText = "植物が　あらわれた。";
       setTimeout(() => {
         messageBox.innerText = "植物は " + currentPlant.name + " を　くりだした。";
