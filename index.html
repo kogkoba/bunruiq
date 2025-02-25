@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <!--更新 -->
-    スタート２
+    スタート３
     <!--ピンチアウト追加 -->
 
    
@@ -134,8 +134,34 @@
       background-color: white;
       color: black;
     }
-    #startButton, #mouthButton {
-      margin: 20px;
+    let startButton = document.getElementById('startButton');
+let bgm = document.getElementById('bgm');
+let bgmCheckbox = document.getElementById('bgmCheckbox');
+
+// **BGMスイッチの初期設定**
+bgm.volume = 0;  // 🔇 スタート時はミュート
+bgmCheckbox.checked = true; // 🔹 ユーザーにはONに見せるが、音はミュート
+
+// **スタートボタンの動作**
+startButton.addEventListener('click', startGame);
+
+function startGame() {
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('gameScreen').style.display = 'block';
+    
+    // **BGMをミュートで再生**
+    bgm.play().catch(error => console.error("BGM再生エラー:", error));
+}
+
+// **BGM ON/OFFスイッチの動作**
+bgmCheckbox.addEventListener('change', () => {
+    if (bgmCheckbox.checked) {
+        bgm.volume = 1.0;  // 🎵 BGMをON（音量100%）
+    } else {
+        bgm.volume = 0;    // 🔇 BGMをミュート（音量0）
+    }
+});
+
     }
 
     /* 選択肢エリア：コマンドウィンドウっぽく */
