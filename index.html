@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <!--更新 -->
-    ONOFF
+    ONOFF２
     <!--ピンチアウト追加 -->
 
    
@@ -281,23 +281,34 @@
 <script>
     const bgm = document.getElementById('bgm');
     const bgmCheckbox = document.getElementById('bgmCheckbox');
+    const startButton = document.getElementById('startButton');
 
-    // 🎵 **ゲーム開始時にBGMをミュート（音量0）で再生**
-    bgm.volume = 0; // 最初はミュート
-    bgm.play().catch(error => console.error("BGM再生エラー:", error));
-
-    // **BGMスイッチの初期状態をOFFに設定**
+    // **初期設定**（BGMはミュート、スイッチOFF）
+    bgm.volume = 0;
     bgmCheckbox.checked = false;
 
-    // 🎵 **BGM ON/OFFスイッチの制御**
+    // **ゲーム開始時にBGMを再生（ミュート状態で）**
+    function startGame() {
+        document.getElementById('startScreen').style.display = 'none';
+        document.getElementById('gameScreen').style.display = 'block';
+
+        // **ユーザー操作後なのでBGM再生可能**
+        bgm.play().catch(error => console.error("BGM再生エラー:", error));
+    }
+
+    // **スタートボタンを押したらゲーム開始**
+    startButton.addEventListener('click', startGame);
+
+    // **BGM ON/OFFスイッチの制御**
     bgmCheckbox.addEventListener('change', () => {
         if (bgmCheckbox.checked) {
-            bgm.volume = 1.0; // 音量を100%に
+            bgm.volume = 1.0; // BGMをON（音量100%）
         } else {
-            bgm.volume = 0; // ミュートにする
+            bgm.volume = 0; // BGMをミュート（音量0）
         }
     });
 </script>
+
 
   
   <script>
