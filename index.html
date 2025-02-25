@@ -27,21 +27,7 @@
   
   <style>
     /* 全体設定 touch-action: manipulation; 追加*/
-    body {
-     #zoomTarget {
-            width: 300px;
-            height: 200px;
-            background-color: lightblue;
-            text-align: center;
-            line-height: 200px;
-            font-size: 24px;
-            transform-origin: center;
-        }
-
-
-
-
-        
+    body {      
       touch-action: manipulation;
       background-color: black;
       color: white;
@@ -53,11 +39,23 @@
       text-align: center;
     }
     /* メインコンテナ */
-    #gameContainer {
-      max-width: 320px;
+      /*もともとのソース#gameContainer {max-width: 320px;
       margin: 0 auto;
       padding: 10px;
-    }
+    }*/
+      
+    #zoomTarget {
+            width: 300px;
+            height: 200px;
+            background-color: lightblue;
+            text-align: center;
+            line-height: 200px;
+            font-size: 24px;
+            transform-origin: center;
+        }
+
+        
+  
 
     /* ドラクエ風の枠線をイメージ：太めの白枠、黒背景 */
     .dq-frame {
