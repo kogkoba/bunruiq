@@ -407,14 +407,14 @@ document.addEventListener("touchmove", (event) => {
 
 //修正バーに関して
     function updateHP() {
-    // HPのテキストを更新
     plantHPText.innerText = "植物HP: " + Math.max(plantHP, 0);
     playerHPText.innerText = "プレイヤーHP: " + Math.max(playerHP, 0);
 
-    // HPバーの幅を調整
-    document.getElementById('plantHP').style.width = plantHP + "%";
-    document.getElementById('playerHP').style.width = playerHP + "%";
+    // HPバーの見た目を更新（最大100%のスケールで減少）
+    document.getElementById('plantHP').style.width = (plantHP) + "%";
+    document.getElementById('playerHP').style.width = (playerHP) + "%";
 }
+
 
     function checkGameOver() {
       if (plantHP <= 0 || playerHP <= 0) {
