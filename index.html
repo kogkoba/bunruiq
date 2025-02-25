@@ -93,14 +93,14 @@
 }
 
     .hp-text {
-      position: absolute;
-      width: 100%;
-      top: 0;
-      left: 0;
-      line-height: 20px;
-      font-size: 12px;
-      color: white;
-    }
+    position: relative;
+    width: 100%;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    color: white;
+}
+
 
     /* 植物画像表示領域 */
     #plantImageContainer {
@@ -380,15 +380,18 @@ document.addEventListener("touchmove", (event) => {
     }
     
     function nextQuestion() {
-      messageBox.innerText = "";
-      currentPlant = plants[Math.floor(Math.random() * plants.length)];
-      // 画像が index.html と同じ階層にある場合
-      plantImage.src = currentPlant.file;
-      messageBox.innerText = "植物が　あらわれた。";
-      setTimeout(() => {
+    messageBox.innerText = "";
+    currentPlant = plants[Math.floor(Math.random() * plants.length)];
+
+    // 画像のパスを修正（index.htmlと同じフォルダにあると仮定）
+    plantImage.src = "./images/" + currentPlant.file; 
+
+    messageBox.innerText = "植物が　あらわれた。";
+    setTimeout(() => {
         messageBox.innerText = "植物は " + currentPlant.name + " を　くりだした。";
-      }, 400);
-    }
+    }, 400);
+}
+
     
     function handleAnswer(selectedClass) {
     if (selectedClass === currentPlant.classification) {
