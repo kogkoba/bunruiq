@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <!--更新 -->
-    スタート５
+    スタート６
     <!--ピンチアウト追加 -->
 
    
@@ -48,14 +48,6 @@
     justify-content: center;
     overflow: hidden; /* はみ出し防止 */
 }
-
-
-
-      
-
-        
-  
-
     /* ドラクエ風の枠線をイメージ：太めの白枠、黒背景 */
     .dq-frame {
       border: 3px double white;    /* 太めの白枠を2重線風に */
@@ -345,14 +337,6 @@ function startGame() {
     nextQuestion();
 }
 
-// **BGM ON/OFFスイッチの動作**
-bgmCheckbox.addEventListener('change', () => {
-    if (bgmCheckbox.checked) {
-        bgm.volume = 1.0;  // 🎵 BGMをON（音量100%）
-    } else {
-        bgm.volume = 0;    // 🔇 BGMをミュート（音量0）
-    }
-});
 
 
     // **BGM ON/OFFスイッチの制御**
