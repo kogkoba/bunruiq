@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <!--更新 -->
-    115８　高さ
+    1205　高さ
     <!--ピンチアウト追加 -->
 
    
@@ -33,22 +33,24 @@
       padding: 10px;
     }*/
       
-   #zoomTarget {
-    width: 60vw; /* 画面幅の90%を使用 */
-    max-width: 40%; /* 画面からはみ出さないようにする */
-    height: 40vh; /* 画面の高さの50% */
+#zoomTarget {
+    width: 80vw; /* 画面幅の80%を使用（適度に収まるように調整） */
+    max-width: 100%; /* 画面いっぱいに広がりすぎないように */
+    height: 50vh; /* 画面の高さの50%を使用 */
     max-height: 300px; /* 最大高さを300pxに制限 */
     background-color: lightblue;
     text-align: center;
-    line-height: 200px; /* 高さに合わせて中央揃え */
     font-size: 24px;
     transform-origin: center;
     margin: auto; /* 中央に配置 */
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden; /* はみ出さないようにする */
 }
 
+
+      
 
         
   
