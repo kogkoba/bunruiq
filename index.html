@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <!--更新 -->
-    スタート8
+    スタート9
     <!--ピンチアウト追加 -->
 
    
@@ -157,7 +157,7 @@ bgmCheckbox.addEventListener('change', () => {
     }
 
     /* 選択肢エリア：コマンドウィンドウっぽく */
-    classificationButtons {
+    #classificationButtons {
       width: 240px;
       /* ドラクエ風の枠 */
       border: 3px double white;
@@ -447,7 +447,7 @@ document.addEventListener("touchmove", (event) => {
     currentPlant = plants[Math.floor(Math.random() * plants.length)];
 
     // 画像のパスを修正（index.htmlと同じフォルダにあると仮定）
-    plantImage.src = "./science2/" + currentPlant.file;
+    plantImage.src = "./bunruiq/" + currentPlant.file;
 
 
     messageBox.innerText = "植物が　あらわれた。";
