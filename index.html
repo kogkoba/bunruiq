@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <!--更新 -->
-    1210　高さ
+    1221　高さ
     <!--ピンチアウト追加 -->
 
    
@@ -33,21 +33,22 @@
       padding: 10px;
     }*/
       
-#zoomTarget {
-    width: 60vw; /* 画面幅の80%を使用（適度に収まるように調整） */
-    max-width: 80%; /* 画面いっぱいに広がりすぎないように */
-    height: 40vh; /* 画面の高さの50%を使用 */
-    max-height: 300px; /* 最大高さを300pxに制限 */
-    background-color: lightblue;
+#gameContainer {
+    width: 90vw; /* 画面幅の90% */
+    max-width: 100vw; /* 最大幅を画面幅まで */
+    height: auto; /* 高さは内容に合わせる */
+    background-color: black;
+    color: white;
     text-align: center;
-    font-size: 24px;
     transform-origin: center;
-    margin: auto; /* 中央に配置 */
+    margin: auto; /* 中央配置 */
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    overflow: hidden; /* はみ出さないようにする */
+    overflow: hidden; /* はみ出し防止 */
 }
+
 
 
       
@@ -265,32 +266,40 @@
 
      <!-- ピンチアウト追加 -->
 
-let zoomTarget = document.getElementById("zoomTarget");
-        let initialDistance = 0;
-        let scale = 1;
+let zoomTarget = document.getElementById("gameContainer"); // ズーム対象を変更
+let initialDistance = 0;
+let scale = 1;
+const minScale = 0.5;  // 最小50%まで縮小可能
+const maxScale = 2.5;  // 最大250%まで拡大可能
 
-        function getDistance(touches) {
-            let dx = touches[0].clientX - touches[1].clientX;
-            let dy = touches[0].clientY - touches[1].clientY;
-            return Math.sqrt(dx * dx + dy * dy);
-        }
+function getDistance(touches) {
+    let dx = touches[0].clientX - touches[1].clientX;
+    let dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+}
 
-        document.addEventListener("touchstart", (event) => {
-            if (event.touches.length === 2) {
-                initialDistance = getDistance(event.touches);
-            }
-        });
+document.addEventListener("touchstart", (event) => {
+    if (event.touches.length === 2) {
+        initialDistance = getDistance(event.touches);
+    }
+});
 
-        document.addEventListener("touchmove", (event) => {
-            if (event.touches.length === 2) {
-                let newDistance = getDistance(event.touches);
-                let zoomFactor = newDistance / initialDistance;
-                scale *= zoomFactor;
-                zoomTarget.style.transform = `scale(${scale})`;
-                initialDistance = newDistance;
-                event.preventDefault(); // スクロール防止
-            }
-        });
+document.addEventListener("touchmove", (event) => {
+    if (event.touches.length === 2) {
+        let newDistance = getDistance(event.touches);
+        let zoomFactor = newDistance / initialDistance;
+        scale *= zoomFactor;
+
+        // **縮小・拡大の範囲を制限**
+        if (scale < minScale) scale = minScale;
+        if (scale > maxScale) scale = maxScale;
+
+        zoomTarget.style.transform = `scale(${scale})`;
+        initialDistance = newDistance;
+        event.preventDefault(); // スクロール防止
+    }
+});
+
 
 
 
