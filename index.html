@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <!--更新 -->
-    スタート9
+    スタート10
     <!--ピンチアウト追加 -->
 
    
@@ -436,8 +436,9 @@ document.addEventListener("touchmove", (event) => {
     function startGame() {
       document.getElementById('startScreen').style.display = 'none';
       gameScreen.style.display = 'block';
-      if (bgmCheckbox.checked) {
+     <!-- if (bgmCheckbox.checked) {
         bgm.play().catch(error => console.error("BGM再生エラー:", error));
+         -->
       }
       nextQuestion();
     }
