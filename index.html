@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <!--更新 -->
-    1221　高さ
+    １５５２
     <!--ピンチアウト追加 -->
 
    
@@ -375,33 +375,34 @@ document.addEventListener("touchmove", (event) => {
     }
     
     function handleAnswer(selectedClass) {
-      if (selectedClass === currentPlant.classification) {
+    if (selectedClass === currentPlant.classification) {
         messageBox.innerText = currentPlant.name + " は　" + currentPlant.classification + " だ";
         setTimeout(() => {
-          messageBox.innerText = "正解！ 植物に20のダメージ";
-          plantHP -= 20;
-          updateHP();
-          checkGameOver();
-          if (plantHP > 0) {
-            setTimeout(nextQuestion, 1000);
-          }
+            messageBox.innerText = "正解！ 植物に20のダメージ";
+            plantHP -= 20;
+            updateHP(); // ここでHPバーを更新
+            checkGameOver();
+            if (plantHP > 0) {
+                setTimeout(nextQuestion, 1000);
+            }
         }, 1000);
-      } else {
+    } else {
         messageBox.innerText = "ミス！";
         setTimeout(() => {
-          messageBox.innerText = currentPlant.name + " は　" + currentPlant.classification + " だ";
-          setTimeout(() => {
-            messageBox.innerText = "プレイヤーに20のダメージ";
-            playerHP -= 20;
-            updateHP();
-            checkGameOver();
-            if (playerHP > 0) {
-              setTimeout(nextQuestion, 1000);
-            }
-          }, 1000);
+            messageBox.innerText = currentPlant.name + " は　" + currentPlant.classification + " だ";
+            setTimeout(() => {
+                messageBox.innerText = "プレイヤーに20のダメージ";
+                playerHP -= 20;
+                updateHP(); // ここでHPバーを更新
+                checkGameOver();
+                if (playerHP > 0) {
+                    setTimeout(nextQuestion, 1000);
+                }
+            }, 1000);
         }, 500);
-      }
     }
+}
+
 
 
 //修正バーに関して
