@@ -1,56 +1,48 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <!--更新 -->
-    スタート10
-    <!--ピンチアウト追加 -->
-
-   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>植物の分類わけクイズゲーム</title>
 
-  <!-- ▼ レトロゲーム風フォントを使いたい場合はGoogle Fontsなどで読み込む例（Press Start 2Pなど） 
+  <!-- レトロゲーム風フォントを使いたい場合はGoogle Fontsなどで読み込む例
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   -->
-  
+
   <style>
-    /* 全体設定 touch-action: manipulation; 追加*/
-    body {      
-      touch-action: manipulation;
+    /* =============================
+       全体のスタイル
+       ============================= */
+    body {
+      touch-action: manipulation;  /* モバイルでのピンチアウト対応 */
       background-color: black;
       color: white;
-      /* ドット風フォントを使う場合は下記のように指定
-         (Press Start 2Pが読み込めない場合はmonospaceフォールバック) */
-      font-family: 'Press Start 2P', monospace;
+      font-family: 'Press Start 2P', monospace; /* 読み込めない場合はデフォルト */
       margin: 0;
       padding: 0;
       text-align: center;
     }
+
     /* メインコンテナ */
-      /*消すもともとのソース#gameContainer {max-width: 320px;
-      margin: 0 auto;
-      padding: 10px;
-    }*/
-      
-#gameContainer {
-    width: 90vw; /* 画面幅の90% */
-    max-width: 100vw; /* 最大幅を画面幅まで */
-    height: auto; /* 高さは内容に合わせる */
-    background-color: black;
-    color: white;
-    text-align: center;
-    transform-origin: center;
-    margin: auto; /* 中央配置 */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden; /* はみ出し防止 */
-}
+    #gameContainer {
+      width: 90vw;  /* 画面幅の90% */
+      max-width: 100vw;
+      height: auto;
+      background-color: black;
+      color: white;
+      text-align: center;
+      transform-origin: center;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden; /* はみ出し防止 */
+    }
+
     /* ドラクエ風の枠線をイメージ：太めの白枠、黒背景 */
     .dq-frame {
-      border: 3px double white;    /* 太めの白枠を2重線風に */
+      border: 3px double white;
       background-color: black;
       color: white;
       padding: 8px;
@@ -58,7 +50,7 @@
       box-sizing: border-box;
     }
 
-    /* メッセージボックス：ドラクエ風に3行程度 */
+    /* メッセージボックス：3行程度 */
     #messageBox {
       width: 90%;
       height: 60px; /* 3行固定 */
@@ -68,31 +60,28 @@
     }
 
     /* HPバー */
-   .hp-bar {
-  width: 100%;
-  height: 20px;
-  border: 1px solid white;
-  position: relative;
-  margin: 5px 0;
-  display: flex;
-  align-items: center;
-}
-
-.hp-inner {
-  height: 100%;
-  background: linear-gradient(to right, red, darkred);
-  transition: width 0.3s ease-in-out;
-}
-
+    .hp-bar {
+      width: 100%;
+      height: 20px;
+      border: 1px solid white;
+      position: relative;
+      margin: 5px 0;
+      display: flex;
+      align-items: center;
+    }
+    .hp-inner {
+      height: 100%;
+      background: linear-gradient(to right, red, darkred);
+      transition: width 0.3s ease-in-out;
+    }
     .hp-text {
-    position: relative;
-    width: 100%;
-    text-align: center;
-    line-height: 20px;
-    font-size: 12px;
-    color: white;
-}
-
+      position: relative;
+      width: 100%;
+      text-align: center;
+      line-height: 20px;
+      font-size: 12px;
+      color: white;
+    }
 
     /* 植物画像表示領域 */
     #plantImageContainer {
@@ -126,40 +115,10 @@
       background-color: white;
       color: black;
     }
-    let startButton = document.getElementById('startButton');
-let bgm = document.getElementById('bgm');
-let bgmCheckbox = document.getElementById('bgmCheckbox');
 
-// **BGMスイッチの初期設定**
-bgm.volume = 0;  // 🔇 スタート時はミュート
-bgmCheckbox.checked = true; // 🔹 ユーザーにはONに見せるが、音はミュート
-
-// **スタートボタンの動作**
-startButton.addEventListener('click', startGame);
-
-function startGame() {
-    document.getElementById('startScreen').style.display = 'none';
-    document.getElementById('gameScreen').style.display = 'block';
-    
-    // **BGMをミュートで再生**
-    bgm.play().catch(error => console.error("BGM再生エラー:", error));
-}
-
-// **BGM ON/OFFスイッチの動作**
-bgmCheckbox.addEventListener('change', () => {
-    if (bgmCheckbox.checked) {
-        bgm.volume = 1.0;  // 🎵 BGMをON（音量100%）
-    } else {
-        bgm.volume = 0;    // 🔇 BGMをミュート（音量0）
-    }
-});
-
-    }
-
-    /* 選択肢エリア：コマンドウィンドウっぽく */
+    /* 分類選択ボタン（DQ風コマンドウィンドウ） */
     #classificationButtons {
       width: 240px;
-      /* ドラクエ風の枠 */
       border: 3px double white;
       background-color: black;
       margin: 10px auto;
@@ -225,31 +184,25 @@ bgmCheckbox.addEventListener('change', () => {
     }
   </style>
 </head>
+
 <body>
-
-
-   
   <div id="gameContainer">
-    <!-- スタート画面（DQ風に枠で囲んでもOK） -->
+    <!-- スタート画面 -->
     <div id="startScreen" class="dq-frame">
       <button id="startButton" class="button">スタート</button>
     </div>
     
     <!-- ゲーム画面 -->
     <div id="gameScreen" style="display: none;">
-        
       <!-- 植物HPバー -->
-<div id="plantHP" class="hp-bar">
-  <div id="plantHPInner" class="hp-inner" style="width: 100%;"></div>
-</div>
+      <div id="plantHP" class="hp-bar">
+        <div id="plantHPInner" class="hp-inner" style="width: 100%;"></div>
+      </div>
 
-
-
-      
-      <!-- メッセージボックス（DQ風枠） -->
+      <!-- メッセージボックス -->
       <div id="messageBox" class="dq-frame"></div>
       
-      <!-- 植物画像（DQ風枠） -->
+      <!-- 植物画像 -->
       <div id="plantImageContainer">
         <img id="plantImage" src="" alt="植物画像">
       </div>
@@ -260,7 +213,7 @@ bgmCheckbox.addEventListener('change', () => {
         <span class="slider"></span>
       </label>
       
-      <!-- 分類選択ボタン（DQ風コマンドウィンドウ） -->
+      <!-- 分類選択ボタン -->
       <div id="classificationButtons">
         <button class="button classification" data-class="アブラナ科">アブラナ科</button>
         <button class="button classification" data-class="イネ科">イネ科</button>
@@ -271,9 +224,9 @@ bgmCheckbox.addEventListener('change', () => {
       </div>
       
       <!-- プレイヤーHPバー -->
-<div id="playerHP" class="hp-bar">
-  <div id="playerHPInner" class="hp-inner" style="width: 100%;"></div>
-</div>
+      <div id="playerHP" class="hp-bar">
+        <div id="playerHPInner" class="hp-inner" style="width: 100%;"></div>
+      </div>
       
       <!-- ゲーム終了時：くちぶえボタン -->
       <div id="endScreen" class="dq-frame" style="display: none;">
@@ -283,225 +236,174 @@ bgmCheckbox.addEventListener('change', () => {
   </div>
   
   <!-- BGM -->
-<audio id="bgm" src="https://kogkoba.github.io/bunrui/sciencebgm.mp3" loop></audio>
+  <audio id="bgm" src="https://kogkoba.github.io/bunrui/sciencebgm.mp3" loop></audio>
 
-<script>
-    // **要素の取得**
-const bgm = document.getElementById('bgm');
-const bgmCheckbox = document.getElementById('bgmCheckbox');
-const startButton = document.getElementById('startButton');
-
-// **BGMの初期設定（ミュート＆スイッチOFF）**
-bgm.volume = 0; // 🔇 最初はミュート
-bgmCheckbox.checked = false; // 🔹 スイッチをOFF
-
-// **スタートボタンの動作**
-startButton.addEventListener('click', () => {
-    document.getElementById('startScreen').style.display = 'none';
-    document.getElementById('gameScreen').style.display = 'block';
-
-    // 🎵 **BGMをミュート状態で再生**
-    bgm.play().catch(error => console.error("BGM再生エラー:", error));
-});
-
-// **BGM ON/OFFスイッチの動作**
-bgmCheckbox.addEventListener('change', () => {
-    if (bgmCheckbox.checked) {
-        bgm.volume = 1.0;  // 🎵 BGMをON（音量100%）
-    } else {
-        bgm.volume = 0;    // 🔇 BGMをミュート（音量0）  
-    }
-});
-
-
-
-function startGame() {
-    document.getElementById('startScreen').style.display = 'none';
-    document.getElementById('gameScreen').style.display = 'block';
-    
-    // **ユーザー操作後なのでBGM再生可能（ただしミュートのまま）**
-    bgm.play().catch(error => console.error("BGM再生エラー:", error));
-
-    // **最初の問題を出題**
-    nextQuestion();
-}
-
-
-<!--
-    // **BGM ON/OFFスイッチの制御**
-    bgmCheckbox.addEventListener('change', () => {
-        if (bgmCheckbox.checked) {
-            bgm.volume = 1.0; // BGMをON（音量100%）
-        } else {
-            bgm.volume = 0; // BGMをミュート（音量0）
-        }
-    });
--->
-</script>
-
-
-  
+  <!-- スクリプト -->
   <script>
+    /* =============================
+       ピンチアウト(ズーム)制御
+       ============================= */
+    let zoomTarget = document.getElementById("gameContainer");
+    let initialDistance = 0;
+    let scale = 1;
+    const minScale = 0.5;  // 最小50%
+    const maxScale = 2.5;  // 最大250%
 
-     <!-- ピンチアウト追加 -->
-
-let zoomTarget = document.getElementById("gameContainer"); // ズーム対象を変更
-let initialDistance = 0;
-let scale = 1;
-const minScale = 0.5;  // 最小50%まで縮小可能
-const maxScale = 2.5;  // 最大250%まで拡大可能
-
-function getDistance(touches) {
-    let dx = touches[0].clientX - touches[1].clientX;
-    let dy = touches[0].clientY - touches[1].clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-}
-
-document.addEventListener("touchstart", (event) => {
-    if (event.touches.length === 2) {
-        initialDistance = getDistance(event.touches);
+    function getDistance(touches) {
+      let dx = touches[0].clientX - touches[1].clientX;
+      let dy = touches[0].clientY - touches[1].clientY;
+      return Math.sqrt(dx * dx + dy * dy);
     }
-});
 
-document.addEventListener("touchmove", (event) => {
-    if (event.touches.length === 2) {
+    document.addEventListener("touchstart", (event) => {
+      if (event.touches.length === 2) {
+        initialDistance = getDistance(event.touches);
+      }
+    });
+
+    document.addEventListener("touchmove", (event) => {
+      if (event.touches.length === 2) {
         let newDistance = getDistance(event.touches);
         let zoomFactor = newDistance / initialDistance;
         scale *= zoomFactor;
-
-        // **縮小・拡大の範囲を制限**
         if (scale < minScale) scale = minScale;
         if (scale > maxScale) scale = maxScale;
 
         zoomTarget.style.transform = `scale(${scale})`;
         initialDistance = newDistance;
         event.preventDefault(); // スクロール防止
-    }
-});
+      }
+    });
 
-
-
-
-
-     
-    /*
-      ▼ 画像ファイルと index.html は同じ階層を想定。
-      ▼ GitHub Pagesの設定は mainブランチ/(root)。
-      ▼ 69種のデータをここに追加してください。
-    */
+    /* =============================
+       クイズゲームのロジック
+       ============================= */
+    // 例として2種だけ定義。実際は69種ぶん追加してください。
     const plants = [
       { file: "aburanna.png", classification: "アブラナ科", name: "アブラナ" },
       { file: "kiku.png", classification: "キク科", name: "キク" }
-      // ... ここに69種分を追加 ...
+      // ... ここに残りの植物データを追加 ...
     ];
 
     let currentPlant = null;
     let plantHP = 100;
     let playerHP = 100;
-    
+
+    const startScreen = document.getElementById('startScreen');
     const startButton = document.getElementById('startButton');
     const gameScreen = document.getElementById('gameScreen');
     const messageBox = document.getElementById('messageBox');
     const plantImage = document.getElementById('plantImage');
-    const plantHPText = document.getElementById('plantHPText');
-    const playerHPText = document.getElementById('playerHPText');
     const classificationButtons = document.querySelectorAll('.classification');
     const mouthButton = document.getElementById('mouthButton');
     const endScreen = document.getElementById('endScreen');
     const bgm = document.getElementById('bgm');
     const bgmCheckbox = document.getElementById('bgmCheckbox');
-    
+
+    // HPバー要素
+    const plantHPInner = document.getElementById('plantHPInner');
+    const playerHPInner = document.getElementById('playerHPInner');
+
+    // BGM初期設定
+    bgm.volume = 0;           // 最初はミュート
+    bgmCheckbox.checked = false; // スイッチOFF表示
+
+    // スタートボタン
     startButton.addEventListener('click', startGame);
-    
+
+    // 分類ボタン
     classificationButtons.forEach(button => {
       button.addEventListener('click', () => {
         const originalText = button.innerText;
+        // ボタンが押された瞬間、矢印を付けて演出
         button.innerText = "▶" + originalText;
-        setTimeout(() => { button.innerText = originalText; }, 200);
+        setTimeout(() => { 
+          button.innerText = originalText; 
+        }, 200);
+
         handleAnswer(button.getAttribute('data-class'));
       });
     });
-    
-    mouthButton.addEventListener('click', () => { location.reload(); });
-    
-    // BGM ON/OFF
+
+    // くちぶえボタン(リロード)
+    mouthButton.addEventListener('click', () => {
+      location.reload();
+    });
+
+    // BGM ON/OFFスイッチ
     bgmCheckbox.addEventListener('change', () => {
       if (bgmCheckbox.checked) {
+        bgm.volume = 1.0;  // BGMをON
         bgm.play().catch(error => console.error("BGM再生エラー:", error));
       } else {
-        bgm.pause();
+        bgm.volume = 0;    // ミュート
       }
     });
-    
+
+    // ゲーム開始
     function startGame() {
-      document.getElementById('startScreen').style.display = 'none';
+      startScreen.style.display = 'none';
       gameScreen.style.display = 'block';
-     <!-- if (bgmCheckbox.checked) {
-        bgm.play().catch(error => console.error("BGM再生エラー:", error));
-         -->
-      }
+
+      // ユーザー操作後なので、再生してもOK（ただしvolume=0のまま）
+      bgm.play().catch(error => console.error("BGM再生エラー:", error));
+
       nextQuestion();
     }
-    
+
+    // 次の問題を出す
     function nextQuestion() {
-    messageBox.innerText = "";
-    currentPlant = plants[Math.floor(Math.random() * plants.length)];
+      messageBox.innerText = "";
+      currentPlant = plants[Math.floor(Math.random() * plants.length)];
 
-    // 画像のパスを修正（index.htmlと同じフォルダにあると仮定）
-    plantImage.src = "./bunruiq/" + currentPlant.file;
+      // 画像パスは実際の配置に合わせて変更
+      // 同じフォルダにあるなら "./aburanna.png" のように書く
+      plantImage.src = currentPlant.file;
 
-
-    messageBox.innerText = "植物が　あらわれた。";
-    setTimeout(() => {
+      // メッセージ演出
+      messageBox.innerText = "植物が　あらわれた。";
+      setTimeout(() => {
         messageBox.innerText = "植物は " + currentPlant.name + " を　くりだした。";
-    }, 400);
-}
+      }, 400);
+    }
 
-    
+    // ボタン押下時の処理
     function handleAnswer(selectedClass) {
-    if (selectedClass === currentPlant.classification) {
+      if (selectedClass === currentPlant.classification) {
         messageBox.innerText = currentPlant.name + " は　" + currentPlant.classification + " だ";
         setTimeout(() => {
-            messageBox.innerText = "正解！ 植物に20のダメージ";
-            plantHP -= 20;
-            updateHP(); // ここでHPバーを更新
-            checkGameOver();
-            if (plantHP > 0) {
-                setTimeout(nextQuestion, 1000);
-            }
+          messageBox.innerText = "正解！ 植物に20のダメージ";
+          plantHP -= 20;
+          updateHP();
+          checkGameOver();
+          if (plantHP > 0) {
+            setTimeout(nextQuestion, 1000);
+          }
         }, 1000);
-    } else {
+      } else {
         messageBox.innerText = "ミス！";
         setTimeout(() => {
-            messageBox.innerText = currentPlant.name + " は　" + currentPlant.classification + " だ";
-            setTimeout(() => {
-                messageBox.innerText = "プレイヤーに20のダメージ";
-                playerHP -= 20;
-                updateHP(); // ここでHPバーを更新
-                checkGameOver();
-                if (playerHP > 0) {
-                    setTimeout(nextQuestion, 1000);
-                }
-            }, 1000);
+          messageBox.innerText = currentPlant.name + " は　" + currentPlant.classification + " だ";
+          setTimeout(() => {
+            messageBox.innerText = "プレイヤーに20のダメージ";
+            playerHP -= 20;
+            updateHP();
+            checkGameOver();
+            if (playerHP > 0) {
+              setTimeout(nextQuestion, 1000);
+            }
+          }, 1000);
         }, 500);
+      }
     }
-}
 
+    // HPバー更新
+    function updateHP() {
+      plantHPInner.style.width = Math.max(0, plantHP) + "%";
+      playerHPInner.style.width = Math.max(0, playerHP) + "%";
+    }
 
-
-function updateHP() {
-    // HPテキストの更新
-    plantHPText.innerText = "植物HP: " + Math.max(0, plantHP);
-    playerHPText.innerText = "プレイヤーHP: " + Math.max(0, playerHP);
-
-    // HPバーの見た目を更新（最大100%のスケールで減少）
-    document.getElementById('plantHPInner').style.width = Math.max(0, plantHP) + "%";
-    document.getElementById('playerHPInner').style.width = Math.max(0, playerHP) + "%";
-}
-
-
-
-
+    // ゲームオーバー判定
     function checkGameOver() {
       if (plantHP <= 0 || playerHP <= 0) {
         if (plantHP <= 0) {
