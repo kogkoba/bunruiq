@@ -276,7 +276,29 @@
   </div>
   
   <!-- BGM -->
-  <audio id="bgm" src="https://kogkoba.github.io/bunrui/sciencebgm.mp3" loop></audio>
+<audio id="bgm" src="https://kogkoba.github.io/bunrui/sciencebgm.mp3" loop></audio>
+
+<script>
+    const bgm = document.getElementById('bgm');
+    const bgmCheckbox = document.getElementById('bgmCheckbox');
+
+    // 🎵 **ゲーム開始時にBGMをミュート（音量0）で再生**
+    bgm.volume = 0; // 最初はミュート
+    bgm.play().catch(error => console.error("BGM再生エラー:", error));
+
+    // **BGMスイッチの初期状態をOFFに設定**
+    bgmCheckbox.checked = false;
+
+    // 🎵 **BGM ON/OFFスイッチの制御**
+    bgmCheckbox.addEventListener('change', () => {
+        if (bgmCheckbox.checked) {
+            bgm.volume = 1.0; // 音量を100%に
+        } else {
+            bgm.volume = 0; // ミュートにする
+        }
+    });
+</script>
+
   
   <script>
 
