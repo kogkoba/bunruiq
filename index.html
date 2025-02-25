@@ -197,6 +197,14 @@
   </style>
 </head>
 <body>
+
+/* ピンチアウト追加 */
+
+<div id="zoomTarget">ピンチしてズーム</div>
+
+   
+
+   
   <div id="gameContainer">
     <!-- スタート画面（DQ風に枠で囲んでもOK） -->
     <div id="startScreen" class="dq-frame">
@@ -250,6 +258,40 @@
   <audio id="bgm" src="https://kogkoba.github.io/bunrui/sciencebgm.mp3" loop></audio>
   
   <script>
+
+     /* ピンチアウト追加 */
+
+let zoomTarget = document.getElementById("zoomTarget");
+        let initialDistance = 0;
+        let scale = 1;
+
+        function getDistance(touches) {
+            let dx = touches[0].clientX - touches[1].clientX;
+            let dy = touches[0].clientY - touches[1].clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        document.addEventListener("touchstart", (event) => {
+            if (event.touches.length === 2) {
+                initialDistance = getDistance(event.touches);
+            }
+        });
+
+        document.addEventListener("touchmove", (event) => {
+            if (event.touches.length === 2) {
+                let newDistance = getDistance(event.touches);
+                let zoomFactor = newDistance / initialDistance;
+                scale *= zoomFactor;
+                zoomTarget.style.transform = `scale(${scale})`;
+                initialDistance = newDistance;
+                event.preventDefault(); // スクロール防止
+            }
+        });
+
+
+
+
+     
     /*
       ▼ 画像ファイルと index.html は同じ階層を想定。
       ▼ GitHub Pagesの設定は mainブランチ/(root)。
