@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <!--更新 -->
-    スタート
+    スタート２
     <!--ピンチアウト追加 -->
 
    
@@ -298,6 +298,35 @@
 
     // **スタートボタンを押したらゲーム開始**
     let startButton = document.getElementById('startButton');
+let bgm = document.getElementById('bgm');
+let bgmCheckbox = document.getElementById('bgmCheckbox');
+
+// **ゲーム開始時のBGM設定（ミュートで再生）**
+bgm.volume = 0;  // 🔹 最初はミュート
+bgmCheckbox.checked = false; // 🔹 スイッチもOFFにする
+
+// **スタートボタンの動作**
+startButton.addEventListener('click', startGame);
+
+function startGame() {
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('gameScreen').style.display = 'block';
+    
+    // **ユーザー操作後なのでBGM再生可能（ただしミュートのまま）**
+    bgm.play().catch(error => console.error("BGM再生エラー:", error));
+
+    // **最初の問題を出題**
+    nextQuestion();
+}
+
+// **BGM ON/OFFスイッチの動作**
+bgmCheckbox.addEventListener('change', () => {
+    if (bgmCheckbox.checked) {
+        bgm.volume = 1.0;  // 🎵 BGMをON（音量100%）
+    } else {
+        bgm.volume = 0;    // 🔇 BGMをミュート（音量0）
+    }
+});
 
 
     // **BGM ON/OFFスイッチの制御**
