@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <!--更新 -->
-    スタート４
+    スタート５
     <!--ピンチアウト追加 -->
 
    
@@ -305,51 +305,33 @@ bgmCheckbox.addEventListener('change', () => {
 <audio id="bgm" src="https://kogkoba.github.io/bunrui/sciencebgm.mp3" loop></audio>
 
 <script>
-    const bgm = document.getElementById('bgm');
-    const bgmCheckbox = document.getElementById('bgmCheckbox');
-    const startButton = document.getElementById('startButton');
+    // **要素の取得**
+const bgm = document.getElementById('bgm');
+const bgmCheckbox = document.getElementById('bgmCheckbox');
+const startButton = document.getElementById('startButton');
 
-    // **初期設定**（BGMはミュート、スイッチOFF）
-    bgm.volume = 0;
-    bgmCheckbox.checked = false;
-
-    // **ゲーム開始時にBGMを再生（ミュート状態で）**
-    function startGame() {
-        document.getElementById('startScreen').style.display = 'none';
-        document.getElementById('gameScreen').style.display = 'block';
-
-        // **ユーザー操作後なのでBGM再生可能**
-        bgm.play().catch(error => console.error("BGM再生エラー:", error));
-    }
-
-    // **スタートボタンを押したらゲーム開始**
-let startButton = document.getElementById('startButton');
-let bgm = document.getElementById('bgm');
-let bgmCheckbox = document.getElementById('bgmCheckbox');
-
-// **初期設定**
-bgm.volume = 0;  // 🔇 最初はミュート
-bgmCheckbox.checked = false; // 🔹 スイッチをOFF状態にする
+// **BGMの初期設定（ミュート＆スイッチOFF）**
+bgm.volume = 0; // 🔇 最初はミュート
+bgmCheckbox.checked = false; // 🔹 スイッチをOFF
 
 // **スタートボタンの動作**
-startButton.addEventListener('click', startGame);
-
-function startGame() {
+startButton.addEventListener('click', () => {
     document.getElementById('startScreen').style.display = 'none';
     document.getElementById('gameScreen').style.display = 'block';
-    
-    // **ゲーム開始時にBGMをミュートで再生（音は出ない）**
+
+    // 🎵 **BGMをミュート状態で再生**
     bgm.play().catch(error => console.error("BGM再生エラー:", error));
-}
+});
 
 // **BGM ON/OFFスイッチの動作**
 bgmCheckbox.addEventListener('change', () => {
     if (bgmCheckbox.checked) {
         bgm.volume = 1.0;  // 🎵 BGMをON（音量100%）
     } else {
-        bgm.volume = 0;    // 🔇 BGMをミュート（音量0）
+        bgm.volume = 0;    // 🔇 BGMをミュート（音量0）  
     }
 });
+
 
 
 function startGame() {
