@@ -384,7 +384,8 @@ document.addEventListener("touchmove", (event) => {
     currentPlant = plants[Math.floor(Math.random() * plants.length)];
 
     // 画像のパスを修正（index.htmlと同じフォルダにあると仮定）
-    plantImage.src = "./images/" + currentPlant.file; 
+    plantImage.src = "./science2/" + currentPlant.file;
+
 
     messageBox.innerText = "植物が　あらわれた。";
     setTimeout(() => {
